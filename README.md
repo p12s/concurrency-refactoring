@@ -13,10 +13,10 @@ cores: 8
 
 ### 0. Source
 ```
-Time 			~ 11.09 seconds
+Time 		~ 11.09 seconds
 Quantity 	1
-Time 			11056139596 ns/op
-Size 			44336 B/op
+Time 		11056139596 ns/op
+Size 		44336 B/op
 Allocs 		351 allocs/op
 ```
 ### 1. Concurrency added
@@ -24,10 +24,10 @@ Allocs 		351 allocs/op
 - generate all user logs - in one time as [][]logItem
 Result:
 ```
-Time 			~ 1.11 seconds
+Time 		~ 1.11 seconds
 Quantity 	1
-Time 			1107507368 ns/op
-Size 			50728 B/op
+Time 		1107507368 ns/op
+Size 		50728 B/op
 Allocs 		501 allocs/op
 ```
 ### 2. String concatenation minimize
@@ -35,9 +35,9 @@ Allocs 		501 allocs/op
 - file.Write([]byte) instead of file.WriteString(string)
 Result:
 ```
-Time 			~ 1.11 seconds
+Time 		~ 1.11 seconds
 Quantity 	1
-Time 			1107307591 ns/op
-Size 			40560 B/op
+Time 		1107307591 ns/op
+Size 		40560 B/op
 Allocs 		371 allocs/op
 ```
