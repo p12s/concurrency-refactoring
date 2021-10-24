@@ -1,7 +1,7 @@
-# Неделя 2. Зарефакторить код
+# Week 2. Refactor code
 
-Оптимизировать код ниже, используя паттерн Worker Pool.  
-Какой вы получили прирост в скорости? Почему?  
+Optimize code with Worker Pool.  
+How much speed increase did you get? Why?
 
 ```go
 var actions = []string{

@@ -18,3 +18,6 @@ bench:
 
 bench.simple:
 	go build -gcflags '-m' ./main.go
+
+clean:
+	rm -fv users/*.txt

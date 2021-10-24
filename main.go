@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-const USER_COUNT = 10
-const MAX_FILE_LOGS_CONT = 10
+const USER_COUNT = 100
+const MAX_FILE_LOGS_CONT = 1000
 const USER_FILE_FOLDER = "users/"
 const USER_FILE_NAME = "uid"
 const USER_FILE_EXT = ".txt"

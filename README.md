@@ -2,14 +2,7 @@
 # Code refactoring
 Task description is [here](task.md)  
 I will reduce generated users number from 100 to 10, and logs lines from 1000 to 10 - at the development stage I do not want to generate many big files.  
-Remove generated files command: "rm -fv users/*.txt"  
-
-## Performance improvement steps
-Testing on a computer with:    
-goos: darwin  
-goarch: amd64  
-cpu: Core i9 2.30GHz  
-cores: 8  
+Remove generated files command: "make clean"  
 
 ### 0. Source
 ```
@@ -35,7 +28,7 @@ Allocs 		501 allocs/op
 - file.Write([]byte) instead of file.WriteString(string)
 Result:
 ```
-Time 		~ 1.11 seconds
+Time 		~ 1.11 seconds (100 files - 1.13 seconds)
 Quantity 	1
 Time 		1107307591 ns/op
 Size 		40560 B/op
