@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func BenchmarkNew(b *testing.B) {
+func BenchmarkMain(b *testing.B) {
 
 	b.ResetTimer()
 	b.ReportAllocs()
