@@ -27,6 +27,7 @@ type User struct {
 	logs  []logItem
 }
 
+// getActivityInfo - user info in readable view
 func (u User) getActivityInfo() *bytes.Buffer {
 	buffer := new(bytes.Buffer)
 
@@ -35,7 +36,7 @@ func (u User) getActivityInfo() *bytes.Buffer {
 		buffer.WriteString(strconv.Itoa(index) + ". [" + item.action + "] at " + item.timestamp.Format(time.RFC3339) + "\n")
 	}
 
-	return buffer
+	return buffer // if not need memory optimization - you can use fmt.Sprintf() for more readability
 }
 
 func main() {
@@ -43,76 +44,72 @@ func main() {
 	rand.Seed(t.Unix())
 
 	var actions = []string{"logged in", "logged out", "created record", "deleted record", "updated account"}
-	RunPipeline(USER_COUNT, &actions)
+	RunPipeline(USER_COUNT, actions)
 
 	fmt.Printf("DONE! Time Elapsed: %.2f seconds\n", time.Since(t).Seconds())
 }
 
 // RunPipeline - user processing pipeline
-func RunPipeline(count int, actions *[]string) {
-	data := make(chan int, count)          // data for user creating
+func RunPipeline(count int, actions []string) {
+	index := make(chan int, count)         // index as user id
 	users := make(chan *User, count)       // users
 	saveResults := make(chan error, count) // errors
 	wg := &sync.WaitGroup{}
 
 	// creating user pipeline
-	n := 0
-	for n < count {
+	for n := 0; n < count; n++ {
 		wg.Add(1)
-		go generateUserPipe(data, users, MAX_FILE_LOGS_CONT, actions)
-		data <- n
-		n += 1
+		go generateUserPipe(index, users, MAX_FILE_LOGS_CONT, actions)
+		index <- n
 	}
 
 	// saving user pipeline
-	n = 0
-	for n < count {
+	for n := 0; n < count; n++ {
 		go saveUserPipe(wg, users, saveResults)
-		n += 1
 	}
 
 	// catch errors
-	n = 0
-	for n < count {
-		if <-saveResults != nil {
-			fmt.Println((<-saveResults).Error())
-		}
-		n += 1
+	for n := 0; n < count; n++ {
+		go func() {
+			if <-saveResults != nil {
+				fmt.Println((<-saveResults).Error())
+			}
+		}()
 	}
 
 	wg.Wait()
-	close(data)
+	close(index)
 	close(users)
 	close(saveResults)
 }
 
 // generateUserPipe - getting user id from one channel and sending created user to other channel
-func generateUserPipe(data <-chan int, users chan<- *User, maxLogsCount int, actions *[]string) {
-	for userId := range data {
-		users <- generateUser(userId, maxLogsCount, actions)
+func generateUserPipe(index <-chan int, users chan<- *User, maxLogsCount int, actions []string) {
+	for id := range index {
+		users <- generateUser(id, maxLogsCount, actions)
 	}
 }
 
 // generateUser - create user
-func generateUser(index, maxLogsCount int, actions *[]string) *User {
+func generateUser(id, maxLogsCount int, actions []string) *User {
 	time.Sleep(time.Millisecond * 100)
-	fmt.Println("generated user", index+1)
+	fmt.Println("generated user", id+1)
 
 	return &User{
-		id:    index + 1,
-		email: "user" + strconv.Itoa(index+1) + "@company.com",
+		id:    id + 1,
+		email: "user" + strconv.Itoa(id+1) + "@company.com",
 		logs:  *generateLogs(maxLogsCount, actions),
 	}
 }
 
 // generateLogs - create logs
-func generateLogs(maxLogsCount int, actions *[]string) *[]logItem {
+func generateLogs(maxLogsCount int, actions []string) *[]logItem {
 	logsCount := rand.Intn(maxLogsCount)
 	logsArr := make([]logItem, logsCount)
 
 	for i := 0; i < logsCount; i++ {
 		logsArr[i] = logItem{
-			action:    (*actions)[rand.Intn(len((*actions))-1)],
+			action:    actions[rand.Intn(len((actions))-1)],
 			timestamp: time.Now(),
 		}
 	}
